@@ -227,23 +227,22 @@ Version: 7.10+
 
 ### Import Dashboard
 
-To import the dashboard, copy the JSON from [OPNsense-Grafana-Dashboard.json](https://raw.githubusercontent.com/bsmithio/OPNsense-Dashboard/master/OPNsense-Grafana-Dashboard.json) and navigate to Dashboards -> Browse -> Import and paste under Import via panel json.
+To import the dashboard, copy the JSON from [OPNsense-Grafana-Dashboard.json](https://raw.githubusercontent.com/morikplay/OPNsense-Dashboard/master/grafana/OPNsense-Grafana-Dashboard.json) and navigate to Dashboards -> Browse -> Import and paste under Import via panel json.
 
 ### Configure Variables
 
 Dashboard Settings -> Variables -> Click on a variable to edit
 
-WAN - $WAN is the variable for our WAN interface panels. It is currently set to igb0 under Custom options. Use a comma-separated list for multiple WAN interfaces.
+- WAN - It is currently set to igb1 under Custom options. Use a comma-separated list for multiple WAN interfaces by editing the `Custom options` field.
 
-LAN - $LAN uses a regex to remove any interfaces you don't want to be grouped as LAN. The filtering happens in the "Regex" field. I use a negative lookahead regex to match the interfaces I want excluded.  It should be pretty easy to understand what you need to do here. I have excluded igb0 (WAN),igb2,igb3,ovpnc1, and wg0.
+- LAN - $LAN uses a regex to remove any interfaces you don't want to be grouped as LAN. The filtering happens in the "Regex" field. I use a negative lookahead regex to match the interfaces I want excluded.  It should be pretty easy to understand what you need to do here. I have excluded `igb1` (WAN). My traffic is on a `lagg0` interface not `igb0` therefore i have excluded `igb0` as well. 
+  ```
+  /^(?!enc0$|igb0$|igb1$)/
+  ```
 
-iface - $iface is the interface variable for the Firewall panels, I have it set to igb0 by default. You can either remove igb0 so you can select all interfaces, or use a comma separated list of interfaces.
+- iface - $iface is the interface variable for the Firewall panels. Its value is populated using flux query.
 
-dataSource - dataSource is the variable for our InfluxDB data source. It is the data source that will be used for all panels with InfluxDB queries. You should see a preview of values you can pick from. Under Instance name filter, use the name of the InfluxDB data source you created for OPNsense if you have multiple InfluxDB data sources.
-
-ESdataSource - ESdataSource is the variable four our Elasticsearch data source. It is the data source that will be used for all panels with Elasticsearch queries. You should see a preview of values you can pick from. Under Instance name filter, use the name of the Elastisearch data source you created for OPNsense if you have multiple Elasticsearch data sources.
-
-Lastly, I don't recommend setting the time range beyond 24 hours, due to how many data points that will return in Grafana.
+Recommended time range should be less than 24 hours. 
 
 ## Configuration for the Suricata dashboard #Optional
 This section assumes you have already configured Suricata.
