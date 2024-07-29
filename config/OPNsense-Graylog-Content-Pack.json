@@ -1,0 +1,718 @@
+{
+  "id": "f16dc022-bba2-4558-bd92-97e694510e2f",
+  "rev": 1,
+  "v": "1",
+  "name": "OPNSense filterlog Content Pack",
+  "summary": "OPNSense filterlog Content Pack",
+  "description": "OPNSense filterlog Content Pack",
+  "vendor": "maulik.vaidya@gmail.com",
+  "url": "https://github.com/morikplay/OPNsense-Dashboard/blob/master/config/OPNsense-pack.json",
+  "created_at": "2024-07-29T21:21:09.193Z",
+  "server_version": "5.2.3+9aee303",
+  "parameters": [
+    {
+      "name": "input_name",
+      "title": "Title of syslog input",
+      "description": "Title of syslog input",
+      "type": "string",
+      "default_value": "opnsense_udp_filterlog"
+    }
+  ],
+  "entities": [
+    {
+      "id": "feab2221-7d36-4aa2-b239-d35069ee3eb6",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "OPNSENSE_DIRECTION",
+        "pattern": "\\bin(?:/out)?|out\\b"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "8ddf565a-b400-4b18-85d5-f5bef46197d7",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "OPNSENSE_WORD", "pattern": "\\b[\\w-]+\\b" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "83848cee-7c6d-4a23-a36f-72f4e1ec7cb6",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "SPACE", "pattern": "\\s*" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "3908fd49-6bc5-49fb-8d7f-087b9a2d7a99",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "BASE16NUM",
+        "pattern": "(?<![0-9A-Fa-f])(?:[+-]?(?:0x)?(?:[0-9A-Fa-f]+))"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "4a0d7187-6df8-427e-822a-01f41177b295",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "WORD", "pattern": "\\b\\w+\\b" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "c2657f85-11cc-488e-a8e5-34af53893a3e",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "GREEDYDATA", "pattern": ".*" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "666ae3fc-43d2-4c0b-a6c1-1ca28b0e56c5",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "HOSTNAME",
+        "pattern": "\\b(?:[0-9A-Za-z][0-9A-Za-z-]{0,62})(?:\\.(?:[0-9A-Za-z][0-9A-Za-z-]{0,62}))*(\\.?|\\b)"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "d4c8e682-f9e1-4a44-8db0-2c71fb21fe51",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "DATA", "pattern": ".*?" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "727a442c-25e4-48f2-b989-50a8646bd238",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "SYSLOGTIMESTAMP",
+        "pattern": "%{MONTH} +%{MONTHDAY} %{TIME}"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "19c64a3d-9387-4446-86df-c920b9d1ad72",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "IPV4",
+        "pattern": "(?<![0-9])(?:(?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[.](?:[0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]))(?![0-9])"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "421a3f39-de1c-4c65-aebe-b20f8f43b172",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "NONNEGINT", "pattern": "\\b(?:[0-9]+)\\b" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "2bddce8d-c94f-4690-b651-1925b78649b6",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "INT", "pattern": "(?:[+-]?(?:[0-9]+))" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "86df862a-6bd8-4144-bbab-3891865b4f4a",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "MONTH",
+        "pattern": "\\b(?:Jan(?:uary|uar)?|Feb(?:ruary|ruar)?|M(?:a|ä)?r(?:ch|z)?|Apr(?:il)?|Ma(?:y|i)?|Jun(?:e|i)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|O(?:c|k)?t(?:ober)?|Nov(?:ember)?|De(?:c|z)(?:ember)?)\\b"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "2e7d5504-756b-4508-a513-302e15c7a931",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "TIME",
+        "pattern": "(?!<[0-9])%{HOUR}:%{MINUTE}(?::%{SECOND})(?![0-9])"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "84d2deea-e702-436b-a725-1876ba7fcac1",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "MONTHDAY",
+        "pattern": "(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "811c30ed-da83-4ffe-9baa-615c639d7ba5",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "HOUR", "pattern": "(?:2[0123]|[01]?[0-9])" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "ef12db3e-36fa-42db-b3d5-a250a8c27ca0",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": { "name": "MINUTE", "pattern": "(?:[0-5][0-9])" },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "c66ad1d4-5551-4aca-a6a7-3739a071863f",
+      "type": { "name": "grok_pattern", "version": "1" },
+      "v": "1",
+      "data": {
+        "name": "SECOND",
+        "pattern": "(?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?)"
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "13dc7495-bfea-4061-b335-ea7cdbe42dcc",
+      "type": { "name": "input", "version": "1" },
+      "v": "1",
+      "data": {
+        "title": { "@type": "string", "@value": "esco-fw-udp-filterlog" },
+        "configuration": {
+          "port": { "@type": "integer", "@value": 1515 },
+          "recv_buffer_size": { "@type": "integer", "@value": 262144 },
+          "force_rdns": { "@type": "boolean", "@value": false },
+          "allow_override_date": { "@type": "boolean", "@value": true },
+          "bind_address": { "@type": "string", "@value": "0.0.0.0" },
+          "expand_structured_data": { "@type": "boolean", "@value": false },
+          "store_full_message": { "@type": "boolean", "@value": true },
+          "timezone": { "@type": "string", "@value": "America/Los_Angeles" },
+          "charset_name": { "@type": "string", "@value": "UTF-8" },
+          "number_worker_threads": { "@type": "integer", "@value": 6 }
+        },
+        "static_fields": {},
+        "type": {
+          "@type": "string",
+          "@value": "org.graylog2.inputs.syslog.udp.SyslogUDPInput"
+        },
+        "global": { "@type": "boolean", "@value": false },
+        "extractors": [
+          {
+            "target_field": { "@type": "string", "@value": "" },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^(?i).*\\sfilterlog\\[.+\\]:\\s(.*,(in|out),4,.*,tcp).*$"
+            },
+            "order": { "@type": "integer", "@value": 0 },
+            "converters": [],
+            "configuration": {
+              "grok_pattern": {
+                "@type": "string",
+                "@value": "<%{NONNEGINT}>%{SYSLOGTIMESTAMP:time} %{HOSTNAME:fw_fqdn} %{WORD}%{GREEDYDATA}:%{SPACE}%{INT:rule_number},%{DATA},%{DATA},%{DATA:label},%{DATA:interface},%{DATA},%{WORD:action},%{WORD:direction},%{INT:ip_version},%{BASE16NUM:tos},%{DATA},%{INT},%{INT},%{INT},%{DATA},%{INT},%{DATA:protocol},%{INT},%{IPV4:src_ip},%{IPV4:dst_ip},%{INT:src_port},%{INT:dst_port},%{NONNEGINT:data_len},%{OPNSENSE_WORD:tcp_flags}?,%{NONNEGINT:sequence_number}?,%{INT:tcp_ack}?,%{INT:window_size}?,%{INT:tcp_urg}?,(?<tcp_options>[^,]+)?"
+              }
+            },
+            "source_field": { "@type": "string", "@value": "full_message" },
+            "title": {
+              "@type": "string",
+              "@value": "OPNsense: RFC5424 IPv4 TCP Grok"
+            },
+            "type": { "@type": "string", "@value": "GROK" },
+            "cursor_strategy": { "@type": "string", "@value": "COPY" },
+            "condition_type": { "@type": "string", "@value": "REGEX" }
+          },
+          {
+            "target_field": { "@type": "string", "@value": "" },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^(?i).*\\sfilterlog\\[.+\\]:\\s(.*,(in|out),4,.*,udp).*$"
+            },
+            "order": { "@type": "integer", "@value": 0 },
+            "converters": [],
+            "configuration": {
+              "grok_pattern": {
+                "@type": "string",
+                "@value": "<%{NONNEGINT}>%{SYSLOGTIMESTAMP:time} %{HOSTNAME:fw_fqdn} %{WORD}%{GREEDYDATA}:%{SPACE}%{INT:rule_number},%{DATA},%{DATA},%{DATA:label},%{DATA:interface},%{DATA},%{WORD:action},%{WORD:direction},%{INT:ip_version},%{BASE16NUM:tos},%{DATA},%{INT},%{INT},%{INT},%{DATA},%{INT},%{DATA:protocol},%{INT},%{IPV4:src_ip},%{IPV4:dst_ip},%{INT:src_port},%{INT:dst_port}"
+              }
+            },
+            "source_field": { "@type": "string", "@value": "full_message" },
+            "title": {
+              "@type": "string",
+              "@value": "OPNsense: RFC5424 IPv4 UDP Grok"
+            },
+            "type": { "@type": "string", "@value": "GROK" },
+            "cursor_strategy": { "@type": "string", "@value": "COPY" },
+            "condition_type": { "@type": "string", "@value": "REGEX" }
+          },
+          {
+            "target_field": { "@type": "string", "@value": "" },
+            "condition_value": {
+              "@type": "string",
+              "@value": "^(?i).*\\sfilterlog\\[.+\\]:\\s(.*,(in|out),4,.*,icmp).*$"
+            },
+            "order": { "@type": "integer", "@value": 0 },
+            "converters": [],
+            "configuration": {
+              "grok_pattern": {
+                "@type": "string",
+                "@value": "<%{NONNEGINT}>%{SYSLOGTIMESTAMP:time} %{HOSTNAME:fw_fqdn} %{WORD:filterlog_key}%{GREEDYDATA}:%{SPACE}%{INT:rule_number},%{DATA},%{DATA},%{DATA:label},%{DATA:interface},%{DATA},%{WORD:action},%{WORD:direction},%{INT:ip_version},%{BASE16NUM:tos},%{DATA},%{INT},%{INT},%{INT},%{DATA},%{INT},%{DATA:protocol},%{INT},%{IPV4:src_ip},%{IPV4:dst_ip},datalength=%{INT:ping_pkt_length}"
+              }
+            },
+            "source_field": { "@type": "string", "@value": "full_message" },
+            "title": {
+              "@type": "string",
+              "@value": "OPNSense: RFC5424 IPv4 ICMP Grok "
+            },
+            "type": { "@type": "string", "@value": "GROK" },
+            "cursor_strategy": { "@type": "string", "@value": "COPY" },
+            "condition_type": { "@type": "string", "@value": "REGEX" }
+          }
+        ]
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "c01e10f0-d9ea-4df2-9df1-b3583dff35e3",
+      "type": { "name": "lookup_adapter", "version": "1" },
+      "v": "1",
+      "data": {
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "name": { "@type": "string", "@value": "geoip-city" },
+        "title": { "@type": "string", "@value": "GeoIP City" },
+        "description": { "@type": "string", "@value": "GeoIP City db" },
+        "configuration": {
+          "type": { "@type": "string", "@value": "maxmind_geoip" },
+          "path": {
+            "@type": "string",
+            "@value": "/usr/share/graylog/data/data/GeoLite2-City.mmdb"
+          },
+          "database_type": { "@type": "string", "@value": "MAXMIND_CITY" },
+          "check_interval": { "@type": "long", "@value": 0 },
+          "check_interval_unit": { "@type": "string", "@value": "MINUTES" }
+        }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "a4dd82d2-8cdf-4492-9694-99ac8fd72128",
+      "type": { "name": "lookup_adapter", "version": "1" },
+      "v": "1",
+      "data": {
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "name": { "@type": "string", "@value": "geoip" },
+        "title": { "@type": "string", "@value": "GeoIP" },
+        "description": { "@type": "string", "@value": "Geo IP Lookup Table" },
+        "configuration": {
+          "type": { "@type": "string", "@value": "maxmind_geoip" },
+          "path": {
+            "@type": "string",
+            "@value": "/usr/share/graylog/data/data/GeoLite2-Country.mmdb"
+          },
+          "database_type": { "@type": "string", "@value": "MAXMIND_COUNTRY" },
+          "check_interval": { "@type": "long", "@value": 1 },
+          "check_interval_unit": { "@type": "string", "@value": "MINUTES" }
+        }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "4fe63f25-c1c5-4b0b-b8ab-5608dc417942",
+      "type": { "name": "lookup_cache", "version": "1" },
+      "v": "1",
+      "data": {
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "name": { "@type": "string", "@value": "geoip-city" },
+        "title": { "@type": "string", "@value": "GeoIP City" },
+        "description": { "@type": "string", "@value": "GeoIP City cache" },
+        "configuration": {
+          "type": { "@type": "string", "@value": "guava_cache" },
+          "max_size": { "@type": "integer", "@value": 1000 },
+          "expire_after_access": { "@type": "long", "@value": 60 },
+          "expire_after_access_unit": {
+            "@type": "string",
+            "@value": "SECONDS"
+          },
+          "expire_after_write": { "@type": "long", "@value": 0 },
+          "ignore_null": { "@type": "boolean", "@value": false }
+        }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "9fea778f-e641-45bb-964d-91897f2b4aeb",
+      "type": { "name": "lookup_cache", "version": "1" },
+      "v": "1",
+      "data": {
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "name": { "@type": "string", "@value": "geoip" },
+        "title": { "@type": "string", "@value": "GeoIP" },
+        "description": { "@type": "string", "@value": "GeoIP Cache" },
+        "configuration": {
+          "type": { "@type": "string", "@value": "guava_cache" },
+          "max_size": { "@type": "integer", "@value": 1000 },
+          "expire_after_access": { "@type": "long", "@value": 1 },
+          "expire_after_access_unit": {
+            "@type": "string",
+            "@value": "SECONDS"
+          },
+          "expire_after_write": { "@type": "long", "@value": 0 }
+        }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "4a067e7e-89a9-4e7a-b213-f3402e49d100",
+      "type": { "name": "lookup_table", "version": "1" },
+      "v": "1",
+      "data": {
+        "default_single_value_type": { "@type": "string", "@value": "NULL" },
+        "cache_name": {
+          "@type": "string",
+          "@value": "9fea778f-e641-45bb-964d-91897f2b4aeb"
+        },
+        "name": { "@type": "string", "@value": "geoip" },
+        "default_multi_value_type": { "@type": "string", "@value": "NULL" },
+        "default_multi_value": { "@type": "string", "@value": "" },
+        "data_adapter_name": {
+          "@type": "string",
+          "@value": "a4dd82d2-8cdf-4492-9694-99ac8fd72128"
+        },
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "title": { "@type": "string", "@value": "GeoIP" },
+        "default_single_value": { "@type": "string", "@value": "" },
+        "description": { "@type": "string", "@value": "Geo IP Lookup" }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "85e81245-1572-4cb5-8494-e8309d87cea9",
+      "type": { "name": "lookup_table", "version": "1" },
+      "v": "1",
+      "data": {
+        "default_single_value_type": { "@type": "string", "@value": "NULL" },
+        "cache_name": {
+          "@type": "string",
+          "@value": "4fe63f25-c1c5-4b0b-b8ab-5608dc417942"
+        },
+        "name": { "@type": "string", "@value": "geoip-city" },
+        "default_multi_value_type": { "@type": "string", "@value": "NULL" },
+        "default_multi_value": { "@type": "string", "@value": "" },
+        "data_adapter_name": {
+          "@type": "string",
+          "@value": "c01e10f0-d9ea-4df2-9df1-b3583dff35e3"
+        },
+        "_scope": { "@type": "string", "@value": "DEFAULT" },
+        "title": { "@type": "string", "@value": "GeoIP City" },
+        "default_single_value": { "@type": "string", "@value": "" },
+        "description": { "@type": "string", "@value": "GeoIP City lookup" }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "7f381d93-e7c5-4997-b79d-12f9a497cdbf",
+      "type": { "name": "pipeline", "version": "1" },
+      "v": "1",
+      "data": {
+        "title": { "@type": "string", "@value": "GeoIP" },
+        "description": { "@type": "string", "@value": "GeoIP" },
+        "source": {
+          "@type": "string",
+          "@value": "pipeline \"GeoIP\"\nstage 0 match either\nrule \"GeoIP lookup: src_ip\"\nend"
+        },
+        "connected_streams": [
+          {
+            "@type": "string",
+            "@value": "477c1b9d-5255-43b2-8294-43a845c3aa2d"
+          }
+        ]
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "cb9a1560-6cd0-4a66-9907-ab787fb80b06",
+      "type": { "name": "pipeline_rule", "version": "1" },
+      "v": "1",
+      "data": {
+        "title": { "@type": "string", "@value": "GeoIP lookup: src_ip" },
+        "description": {
+          "@type": "string",
+          "@value": "If src-ip present, perform maxmind lookup and create src-ip-geo-* fields"
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"GeoIP lookup: src_ip\"\nwhen\n    has_field(\"src_ip\")\nthen\n    let ip_value = get_field(\"src_ip\");\n    let geo = lookup(\"geoip\", ip_value);\n    \n    let geo_city = lookup(\"geoip-city\", ip_value);\n    set_field(\"src_ip_country_code\", geo_city[\"country\"].iso_code);\n    set_field(\"src_ip_country_name\", geo_city[\"country\"].names.en);\n    set_field(\"src_ip_coordinates\", geo_city[\"coordinates\"]);\n    set_field(\"src_ip_loc_lat\", geo_city[\"location\"].latitude);\n    set_field(\"src_ip_loc_long\", geo_city[\"location\"].longitude);\n    set_field(\"src_ip_city\", geo_city[\"city\"].names.en);\n    set_field(\"src_ip_city_geoid\", geo_city[\"city\"].geoname_id);\n    set_field(\"src_ip_geo\", geo_city);\nend"
+        }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "5a04a29d-d5ce-4953-8fb2-d33928226665",
+      "type": { "name": "search", "version": "1" },
+      "v": "1",
+      "data": {
+        "summary": { "@type": "string", "@value": "" },
+        "search": {
+          "queries": [
+            {
+              "id": "2ab0ccf8-935f-4dff-b9ae-188393f63823",
+              "timerange": { "from": 18000, "type": "relative" },
+              "filter": {
+                "type": "or",
+                "filters": [
+                  {
+                    "type": "stream",
+                    "id": "477c1b9d-5255-43b2-8294-43a845c3aa2d"
+                  }
+                ]
+              },
+              "filters": [],
+              "query": {
+                "type": "elasticsearch",
+                "query_string": "interface:igb1 AND action:block AND direction: in"
+              },
+              "search_types": [
+                {
+                  "query": null,
+                  "name": null,
+                  "timerange": null,
+                  "offset": 0,
+                  "streams": [],
+                  "filter": null,
+                  "decorators": [],
+                  "type": "messages",
+                  "id": "bd11d0c6-7c7c-4ae2-b5c0-ccad7557e40e",
+                  "limit": 150,
+                  "filters": []
+                },
+                {
+                  "query": null,
+                  "name": "chart",
+                  "timerange": null,
+                  "column_limit": null,
+                  "streams": [],
+                  "row_limit": null,
+                  "series": [
+                    {
+                      "type": "count",
+                      "id": "Countries",
+                      "field": "src_ip_coordinates"
+                    }
+                  ],
+                  "filter": null,
+                  "rollup": true,
+                  "row_groups": [
+                    {
+                      "type": "values",
+                      "fields": ["src_ip_coordinates"],
+                      "limit": 500,
+                      "skip_empty_values": false
+                    }
+                  ],
+                  "type": "pivot",
+                  "id": "7e45b9b7-1edf-43e3-ab55-6037eead2b48",
+                  "filters": [],
+                  "column_groups": [],
+                  "sort": []
+                }
+              ]
+            }
+          ],
+          "parameters": [],
+          "requires": {},
+          "owner": "admin",
+          "created_at": "2024-07-29T18:09:29.862Z"
+        },
+        "created_at": "2024-07-29T01:23:48.553Z",
+        "requires": {},
+        "state": {
+          "2ab0ccf8-935f-4dff-b9ae-188393f63823": {
+            "selected_fields": null,
+            "static_message_list_id": null,
+            "titles": {
+              "widget": {
+                "02d32582-26f2-4c58-924b-0e06d0e075ef": "Message Count",
+                "e731904c-cddd-405e-b221-47f399052c12": "All Messages"
+              }
+            },
+            "widgets": [
+              {
+                "id": "e731904c-cddd-405e-b221-47f399052c12",
+                "type": "messages",
+                "filter": null,
+                "filters": [],
+                "timerange": null,
+                "query": null,
+                "streams": [],
+                "config": {
+                  "fields": ["timestamp", "source"],
+                  "show_message_row": true,
+                  "show_summary": true,
+                  "decorators": [],
+                  "sort": [
+                    {
+                      "type": "pivot",
+                      "field": "timestamp",
+                      "direction": "Descending"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "4b84a7a2-f061-4400-9e24-0099bf2a0304",
+                "type": "aggregation",
+                "filter": null,
+                "filters": [],
+                "timerange": null,
+                "query": null,
+                "streams": [],
+                "config": {
+                  "visualization": "map",
+                  "column_limit": null,
+                  "event_annotation": false,
+                  "row_limit": 500,
+                  "row_pivots": [
+                    {
+                      "fields": ["src_ip_coordinates"],
+                      "type": "values",
+                      "config": { "limit": 500 }
+                    }
+                  ],
+                  "series": [
+                    {
+                      "config": { "name": "Countries" },
+                      "function": "count(src_ip_coordinates)"
+                    }
+                  ],
+                  "rollup": false,
+                  "column_pivots": [],
+                  "visualization_config": {
+                    "viewport": {
+                      "zoom": 1,
+                      "center_x": -5.072051327865732,
+                      "center_y": -4.337681178777061
+                    }
+                  },
+                  "formatting_settings": null,
+                  "sort": []
+                }
+              }
+            ],
+            "widget_mapping": {
+              "e731904c-cddd-405e-b221-47f399052c12": [
+                "bd11d0c6-7c7c-4ae2-b5c0-ccad7557e40e"
+              ],
+              "4b84a7a2-f061-4400-9e24-0099bf2a0304": [
+                "7e45b9b7-1edf-43e3-ab55-6037eead2b48"
+              ]
+            },
+            "positions": {
+              "e731904c-cddd-405e-b221-47f399052c12": {
+                "col": 1,
+                "row": 5,
+                "height": 6,
+                "width": "Infinity"
+              },
+              "4b84a7a2-f061-4400-9e24-0099bf2a0304": {
+                "col": 1,
+                "row": 1,
+                "height": 4,
+                "width": "Infinity"
+              }
+            },
+            "formatting": { "highlighting": [] },
+            "display_mode_settings": { "positions": {} }
+          }
+        },
+        "properties": [],
+        "owner": "admin",
+        "title": { "@type": "string", "@value": "worldmap_block_WAN" },
+        "type": "SEARCH",
+        "description": { "@type": "string", "@value": "" }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    },
+    {
+      "id": "477c1b9d-5255-43b2-8294-43a845c3aa2d",
+      "type": { "name": "stream", "version": "1" },
+      "v": "1",
+      "data": {
+        "alarm_callbacks": [],
+        "outputs": [],
+        "remove_matches": { "@type": "boolean", "@value": true },
+        "title": { "@type": "string", "@value": "OPNsense / filterlog" },
+        "stream_rules": [
+          {
+            "type": { "@type": "string", "@value": "CONTAINS" },
+            "field": { "@type": "string", "@value": "message" },
+            "value": { "@type": "string", "@value": "filterlog" },
+            "inverted": { "@type": "boolean", "@value": false },
+            "description": { "@type": "string", "@value": "" }
+          }
+        ],
+        "alert_conditions": [],
+        "matching_type": { "@type": "string", "@value": "OR" },
+        "disabled": { "@type": "boolean", "@value": false },
+        "description": { "@type": "string", "@value": "OPNsense filter logs" },
+        "default_stream": { "@type": "boolean", "@value": false }
+      },
+      "constraints": [
+        { "type": "server-version", "version": ">=5.2.3+9aee303" }
+      ]
+    }
+  ]
+}

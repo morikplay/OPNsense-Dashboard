@@ -16,6 +16,11 @@
 - Firewall Statistics - Blocked Ports, Protocols, Events, Blocked IP Locations, and Top Blocked IP
 # Changelog
 
+[2024]
+Modified Graylog content pack with the following:
+- included configuration for ingesting `filterlog` input
+- included lookup table, cache and data adapters
+- due to a change in `filterlog` format, the csv-to-field regex didn't work. Changed the behavior to consuming grok extractors instead. Only `IPv4` is verified (as I do not have functional IPv6 network yet)
 
 Converted InfluxQL queries to Flux.
 
@@ -35,9 +40,9 @@ Added RFC5424 support thanks to [subract](https://github.com/IRQ10/Graylog-OPNse
 
 # Running on
 
-    Grafana 9.2.10
-    InfluxDB 2.6.1
-    Graylog 5.0.2
+    Grafana >11.1.3
+    InfluxDB >2.7.6
+    Graylog >5.2.3
 
 
 # Configuration
