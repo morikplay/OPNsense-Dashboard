@@ -6,7 +6,7 @@
   "summary": "OPNSense filterlog Content Pack",
   "description": "OPNSense filterlog Content Pack",
   "vendor": "maulik.vaidya@gmail.com",
-  "url": "https://github.com/morikplay/OPNsense-Dashboard/blob/master/config/OPNsense-pack.json",
+  "url": "https://github.com/morikplay/OPNsense-Dashboard/blob/master/config/OPNsense-Graylog-Content-Pack.json",
   "created_at": "2024-07-29T21:21:09.193Z",
   "server_version": "5.2.3+9aee303",
   "parameters": [
