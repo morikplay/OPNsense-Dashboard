@@ -49,12 +49,16 @@ After you've made the necessary changes, run `docker-compose up -d` in the same 
 Once you have your docker containers running, follow the steps below.
 
 ## Configuring InfluxDB
-After InfluxDB is started, go to http://(ip of docker server):8086, you will need to setup your username, password, bucket and organization here. Once that is done navigate to the Data tab, click on Telegraf, and create a configuration for a system. Name it, and copy your API token, you will need this for your Telegraf configuration. You will also need to generate another API token for Grafana. Click on API tokens -> Generate API Token -> Read/Write Access -> Click on your bucket under Read -> and Save. Copy this somewhere as well, you'll need it for Grafana.
+After InfluxDB is started:
+1. Go to http://<docker_ip>:8086
+2. Setup your username, password, bucket and organization here. 
+3. Navigate to Data-->Telegraf and create a configuration for a system. Name it, and copy your API token, you will need this for your Telegraf configuration. 
+4. Generate another API token for Grafana. Click on API tokens -> Generate API Token -> Read/Write Access -> Click on your bucket under Read -> and Save. Copy this somewhere as well, you'll need it for Grafana.
 
 
 ## Configuring Telegraf
 
-### For previous users
+### For users w/ telegraf installed via freeBSD `pkg`
 
 If you previously used the pkg install version of telegraf, follow these instructions.
 
@@ -65,8 +69,8 @@ Delete the line that starts with telegraf in /usr/local/etc/sudoers.
 Once those are done you can continue with the new configuration.
 
 
-### Install the plugin and configure options
-Install the Telegraf plugin on OPNsense, to do so, navigate to System -> Firmware -> Plugins -> Search for telegraf, and click the plus icon to install.
+### Install + configure
+Install the Telegraf plugin on OPNsense. `System -> Firmware -> Plugins -> Search` for telegraf, and click the plus icon to install.
 
 ![](https://www.bsmithio.com/post/opnsense-dashboard/plugin.png)
 
@@ -151,43 +155,78 @@ Lastly, check if Telegraf is running
 
 ## Configuring Graylog
 
-### Add GeoIP to Graylog
+### 1. Add GeoIP to Graylog
 
 To make the map work on Grafana, you must create a MaxMind account here https://www.maxmind.com/en/geolite2/signup. Then generate a license key by going to Account -> Manage License Keys -> Generate New License Key. Copy this key somewhere because you'll need it again soon.
 
-You'll need to download the GeoIP database file to your Graylog container. Access your Graylog container's shell from your Docker host like so
+Three GeoIP files are useful: _Country_, _City_, and _ASN_ database. _Note: Due to recent changes by Maxmind, City database does not give the same information as Country. Additional information about GeoIP can be found [below](#geoip-graylog-info)
 
-`sudo docker exec -it graylog /bin/bash`
+You'll need to download the GeoIP database file to your local machine Graylog container. Access your Graylog container's shell from your Docker host like so:
 
-Then download the database file, replace `YOUR_LICENSE_KEY` with the key you generated above.
+    sudo docker exec -it graylog /bin/bash
 
-```
-curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=YOUR_LICENSE_KEY&suffix=tar.gz" -o GeoLite2-Country.tar.gz \
-&& tar -xzvf GeoLite2-Country.tar.gz \
-&& mv GeoLite2-Country_*/GeoLite2-Country.mmdb /usr/share/graylog/data/data/
-```
+Then download the database file, replace `YOUR_LICENSE` with the key you generated above.
 
-### Configure Additional Settings
+  ```
+  curl -flLs "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<YOUR_LICENSE>>&suffix=tar.gz" -o GeoLite2-Country.tar.gz \
+  && tar -xzvf GeoLite2-Country.tar.gz \
+  && mv GeoLite2-Country_*/GeoLite2-Country.mmdb /usr/share/graylog/data/data/
 
-In a browser navigate to http://(ip of docker server):9000 and login.
+  curl -flLs "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=<YOUR_LICENSE>&suffix=tar.gz" -o GeoLite2-City.tar.gz \
+  && tar -xzvf GeoLite2-City.tar.gz \
+  && mv GeoLite2-City_*/GeoLite2-City.mmdb /usr/share/graylog/data/data/
 
-For Graylog, it's recommended to create an index set. To do so, navigate to System -> Indices. Create an index set with the name "OPNsense / filterlog" and set the index prefix to `opnsense_filterlog`.
+  curl -flLs "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=<YOUR_LICENSE>&suffix=tar.gz" -o GeoLite2-ASN.tar.gz \
+  && tar -xzvf GeoLite2-ASN.tar.gz \
+  && mv GeoLite2-ASN_*/GeoLite2-ASN.mmdb /usr/share/graylog/data/data/
+  ```
 
-![Graylog Index Set](https://www.bsmithio.com/post/opnsense-dashboard/indexset.png)
+### 2. Install Content Pack
 
-Once that's done, download the [content pack](https://raw.githubusercontent.com/bsmithio/OPNsense-Dashboard/master/config/OPNsense-pack.json) and install it on Graylog by navigating to System -> Content Packs -> Upload, choose the pack, Upload, then Install.
+1. In a browser login in at http://<docker-ip>:9000.
+2. For Graylog, it's recommended to create an index set. To do so, navigate to System -> Indices. Create an index set with the name "OPNsense / filterlog" and set the index prefix to `opnsense_filterlog`.
 
-Now, add your index set from earlier to the "OPNsense / filterlog" stream. Navigate to Streams -> More Actions -> Edit Stream -> select your index set and save.
+    ![Graylog Index Set](https://www.bsmithio.com/post/opnsense-dashboard/indexset.png)
 
-![Graylog Stream Index Set](https://www.bsmithio.com/post/opnsense-dashboard/streamindex.png)
+3. Download [content pack](https://raw.githubusercontent.com/morikplay/OPNsense-Dashboard/master/config/OPNsense-GraylogContent-Pack.json).
 
-There's one more step we need to do here, navigate to System -> Configurations -> click on Update under Message Processors, and reorder like so:
+4. Install content pack on Graylog: `System -> Content Packs -> Upload`, choose the pack, `Upload`, then `Install`. Two configurables are provided in the `Content Pack`.
 
-![Graylog Message Processors](https://www.bsmithio.com/post/opnsense-dashboard/processors.png)
+    a. `Port` for receiving `filterlog`
+
+    b. `Name` of the syslog input
+
+
+5. `Content Pack` should install the following components:
+- `input`
+- `stream`
+- `grok extractors` _only v4 extractors are provided as I do not yet have v6 enabled_
+  - &check; IPv4 UDP
+  - &check; IPv4 TCP
+  - &check; IPv4 ICMP
+  - &cross; IPv4 UDP
+  - &cross; IPv4 TCP
+  - &cross; IPv4 ICMP
+- `pipeline` along with `rules`
+- `lookup table`
+- `cache`
+- `data adapter`
+- `search` with geomap display
+  ![alt text](graylog/search_map.png)
+
+### 3. Fine-tuning
+1. Add index set from [2] earlier to `OPNsense / filterlog` stream. Navigate to `Streams -> More Actions -> Edit Stream` -> select your index set and save.
+    ![Graylog Stream Index Set](https://www.bsmithio.com/post/opnsense-dashboard/streamindex.png)
+
+2. Navigate to `System -> Configurations -> Message Processors`. The following order worked for [Brian Smith](https://github.com/bsmithio):
+
+      ![Graylog Message Processors](https://www.bsmithio.com/post/opnsense-dashboard/processors.png)
+
+But, I had to switch `GeoIP Resolver` and `Pipeline Processor`
 
 Ensure that all of these are enabled, and click save.
 
-### Add Graylog server as syslog target on OPNsense
+### 4. Add Graylog server as syslog target on OPNsense
 
 Once that is all done, login to your OPNsense router and navigate to System -> Settings -> Logging / targets. Add a new target with the following options:
 
@@ -195,11 +234,13 @@ Once that is all done, login to your OPNsense router and navigate to System -> S
 
 Add a description if you'd like, then click save.
 
+_Note: I use port `1514` for sending standard `syslog` UDP streams from many of my VMs/containers. So as to reduce clutter and processing overhead, I changed this port to `1515`. This enables the `OPNSense / filterlog` regex + extractors to work only on `filterlog` messages from OPNSense; not regular syslogs from other entities._
+
 ## Configuring Grafana
 
 ### Add InfluxDB and ElasticSearch data sources
 
-You will need to add the data sources on Grafana. Navigate to http://(ip of docker server):3000, login and click on the cog wheel and Add a Data Source.
+You will need to add the data sources on Grafana. Navigate to http://<docker_ip>:3000, login and click on the cog wheel and Add a Data Source.
 
 For InfluxDB, make the following configurations
 
@@ -213,7 +254,7 @@ Token: Your Grafana InfluxDB API Token
 
 Default Bucket: Your opnsense bucket. This will be the bucket that the panel queries will use.
 
-![Grafana InfluxDB Configuration](https://www.bsmithio.com/post/opnsense-dashboard/influxdb.png)
+  ![Grafana InfluxDB Configuration](https://www.bsmithio.com/post/opnsense-dashboard/influxdb.png)
 
 For ElasticSearch, make the following configurations
 
@@ -227,7 +268,8 @@ Version: 7.10+
 
 ### Import Dashboard
 
-To import the dashboard, copy the JSON from [OPNsense-Grafana-Dashboard.json](https://raw.githubusercontent.com/morikplay/OPNsense-Dashboard/master/grafana/OPNsense-Grafana-Dashboard.json) and navigate to Dashboards -> Browse -> Import and paste under Import via panel json.
+To import the dashboard, copy the JSON from [OPNsense-Grafana-Dashboard.json](https://raw.githubusercontent.com/morikplay/OPNsense-Dashboard/master/grafana/OPNsense-Grafana-Dashboard.json)
+Navigate to `Dashboards -> Browse -> Import`, paste under Import via panel json.
 
 ### Configure Variables
 
@@ -245,6 +287,8 @@ Dashboard Settings -> Variables -> Click on a variable to edit
 Recommended time range should be less than 24 hours. 
 
 ## Configuration for the Suricata dashboard #Optional
+__(NOT YET TESTED for new `filterlog` format)__
+
 This section assumes you have already configured Suricata.
 
 ### Add the necessary files
@@ -364,9 +408,47 @@ curl https://raw.githubusercontent.com/3CORESec/testmynids.org/master/tmNIDS -o 
 You can then run the tests through the CLI.
 ![](https://www.bsmithio.com/post/opnsense-dashboard/tmnids.png)
 
-### Map Issues
 
-If you see no GeoIP data on the map make sure you rearranged the Message Processors in System -> Configurations, and reorder like so:
-
-![Graylog Message Processors](https://www.bsmithio.com/post/opnsense-dashboard/processors.png)
-
+### GeoIP graylog info
+Graylog GeoIP plugin gives the following lookup information (_Assuming MaxMind database is made available_)
+#### ASN Database
+```
+{
+    "as_number": 15169,
+    "as_organization": "Google LLC"
+}
+```
+#### Country Database
+```
+{
+    "continent": { "code": "NA", "geoname_id": 6255149, "names": { "en": "North America" } },
+    "country": { "geoname_id": 6252001, "iso_code": "US", "names": { "en": "United States" } },
+    "registered_country": { "geoname_id": 6252001, "iso_code": "US", "names": { } },
+    "represented_country": { "geoname_id": null, "iso_code": "US", "names": { } },
+    "traits": {
+      "ip_address": "8.8.8.8",
+      "is_anonymous_proxy": false,
+      "is_legitimate_proxy": false,
+      "is_satellite_provider": false,
+      "isp": null,
+      "organization": null,
+    }
+}
+```
+#### City Database
+```
+{
+    "city": { "geoname_id": 5375480, "names": { "en": "Mountain View" } },
+    "location": {
+      "accuracy_radius": 1000,
+      "average_income": null,
+      "latitude": 37.386,
+      "longitude": -122.0838,
+      "metro_code": 807,
+      "population_density": null,
+      "time_zone": "America/Los_Angeles"
+    },
+    "postal": { "code": "94035" },
+    "subdivisions": [ { "geoname_id": 5332921, "iso_code": "CA", "names": { "en": "California" } } ],
+}
+```
