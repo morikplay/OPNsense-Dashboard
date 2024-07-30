@@ -27,7 +27,7 @@
   * [How to drop an InfluxDB v2 measurement](#how-to-drop-an-influxdb-v2-measurement)
   * [Learn more about Flux queries](#learn-more-about-flux-queries)
   * [Suricata Troubleshooting](#suricata-troubleshooting)
-  * [Map Issues](#map-issues)
+  * [GeoIP Graylog Info](#geoip-graylog-info)
 
 ## Docker
 
